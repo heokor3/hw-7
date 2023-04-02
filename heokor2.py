@@ -1,48 +1,49 @@
 import sqlite3
 
-conn = sqlite3.connect('students.db')
+db = sqlite3.connect('hw.db')
 
-cursor = conn.cursor()
+c = db.cursor()
 
-# cursor.execute('''CREATE TABLE students
-#                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
-#                 name TEXT NOT NULL,
-#                 surname TEXT NOT NULL,
-#                 birth_year INTEGER NOT NULL,
-#                 homework_score INTEGER NOT NULL,
-#                 hobby TEXT)''')
+c.execute('''CREATE TABLE IF NOT EXISTS user (
+name text,
+surname text,
+year integer,
+points integer,
+hobby text)
+''')
 
-# добавляем 10 студентов
-students = [('Иван', 'Иванов', 2066, 8, 'Точно не шпионить'),
-            ('Саят', 'Омаров', 1987, 10, 'Брать и не брать взятки'),
-            ('Рината', 'Калашникова', 2000, 7, 'Программирование'),
-            ('Наташа', 'Смирнова', 1999, 10, 'Красть ручки'),
-            ('Нурбек', 'Омуралиев', 2000, 10, 'Футбол'),
-            ('Александр', 'Тен', 2001, 6, 'Волейбол'),
-            ('Никита', 'Дзю', 2000, 9, 'Бег'),
-            ('Мира', 'Касымбекова', 2010, 10, 'Плавание'),
-            ('Саша', 'Ковалев', 2019, 5, 'Нарды'),
-            ('Роман', 'Фильченков', 1, 1000000000000000000000, 'Майнкрафт')]
+c.execute("INSERT INTO user VALUES ('Иван', 'Иванов', 2066, 8, 'Точно не шпионить')")
+c.execute("INSERT INTO user VALUES ('Саят', 'Омаров', 1987, 10, 'Брать и не брать взятки')")
+c.execute("INSERT INTO user VALUES ('Рината', 'Калашникова', 2000, 7, 'Программирование')")
+c.execute("INSERT INTO user VALUES ('Наташа', 'Смирнова', 1999, 10, 'Красть ручки')")
+c.execute("INSERT INTO user VALUES ('Нурбек', 'Омуралиев', 2000, 10, 'Футбол')")
+c.execute("INSERT INTO user VALUES ('Александр', 'Тен', 2001, 6, 'Волейбол')")
+c.execute("INSERT INTO user VALUES ('Никита', 'Дзю', 2000, 9, 'Бег')")
+c.execute("INSERT INTO user VALUES ('Мира', 'Касымбекова', 2010, 10, 'Плавание')")
+c.execute("INSERT INTO user VALUES ('Саша', 'Ковалев', 2019, 5, 'Нарды')")
+c.execute("INSERT INTO user VALUES ('Роман', 'Фильченков', 1, 1000000000000000000000, 'Майнкрафт')")
+c.execute("UPDATE user SET name = 'genius' WHERE points = 10")
+c.execute("SELECT rowid, surname, name FROM user ")
 
-for student in students:
-    cursor.execute("INSERT INTO students (name,surname,birth_year,homework_score,hobby)VALUES(?, ?, ?, ?, ?)", student)
+c.execute("SELECT rowid FROM user")
 
-conn.commit()
+c.execute("UPDATE user SET name = 'genius' WHERE points = 10")
+c.execute("SELECT rowid, surname, name FROM user ")
 
-cursor.execute('''SELECT * FROM  students WHERE length(surname) > 10''')
-result = cursor.fetchall()
-print('Студенты с фамилией больше 10 символов:')
-for row in result:
-    print(row)
+items = c.fetchall()
 
-cursor.execute('''UPDATE students SET name ='genius' WHERE homework_score > 10''')
+print(items)
 
-cursor.execute('''SELECT * FROM students WHERE  name = 'genius' ''')
-result = cursor.fetchall()
-print('\nСтуденты со статусом genius:')
-for row in result:
-    print(row)
+for i in items:
+    surname = i[1]
+    if len(surname) > 10:
+        print(f'\nСтуденты со статусом genius: {surname}')
+    else:
+        ...
 
-cursor.execute("DELETE FROM students WHERE id % 2 = 0")
+c.execute("SELECT rowid, name FROM user WHERE name = 'genius'")
+c.execute("DELETE FROM user WHERE rowid % 2 = 0")
+print(c.fetchall())
 
-conn.close()
+db.commit()
+db.close()
